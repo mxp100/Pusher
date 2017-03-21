@@ -1,6 +1,7 @@
 {
   "name": "mxp100/pusher",
   "description": "PHP push notifications to APNS, FCM",
+  "version": "0.1.0",
   "keywords": ["push","notifications","apns","fcm"],
   "type": "library",
   "license": "Apache-2.0",
