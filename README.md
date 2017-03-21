@@ -6,7 +6,7 @@ $serverKey = '[server key]';
 $deviceId = '[device token]';
 
 $devices = new DeviceCollection([new Device($deviceId)]);
-$message = new Message('Какое то тестовое сообщение');
+$message = new Message('This is a test message');
 
 $adapter = new Fcm($serverKey);
 
@@ -19,7 +19,7 @@ $serverKey = '[path to certification]';
 $deviceId = '[device token]';
 
 $devices = new DeviceCollection([new Device($deviceId)]);
-$message = new Message('Тестовое сообщение урпку');
+$message = new Message('This is a test message');
 
 $adapter = new Apns($serverKey, AdapterInterface::ENVIRONMENT_DEVELOPMENT);
 
