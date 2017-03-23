@@ -70,9 +70,9 @@ class Apns implements AdapterInterface
 
                 . chr(3) . pack('n', 4) . pack('N', $idx)
 
-                . chr(4) . pack('n', 4) . pack('N', time() + 86400)
+                . chr(4) . pack('n', 4) . pack('N', time() + $message->getTTL())
 
-                . chr(5) . pack('n', 1) . chr(10);
+                . chr(5) . pack('n', 1) . chr($message->getPriority());
 
             $notification = chr(2) . pack('N', strlen($inner)) . $inner;
 

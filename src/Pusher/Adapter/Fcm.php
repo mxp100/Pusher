@@ -37,8 +37,17 @@ class Fcm implements AdapterInterface
                 'body' => $message->getText(),
             ],
             'registration_ids' => $tokens,
+            'time_to_live' => $message->getTTL(),
         ];
 
+        switch ($message->getPriority()) {
+            case MessageInterface::PRIORITY_HIGH:
+                $data['priority'] = 'high';
+                break;
+            case MessageInterface::PRIORITY_NORMAL:
+                $data['priority'] = 'normal';
+                break;
+        }
 
         $ch = curl_init(self::API_URL);
         curl_setopt_array($ch, [
