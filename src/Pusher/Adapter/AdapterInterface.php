@@ -19,7 +19,7 @@ interface AdapterInterface
 
     public function __construct(string $serverKey, int $environment = AdapterInterface::ENVIRONMENT_DEVELOPMENT);
 
-    public function push(DeviceCollection $devices, MessageInterface $message);
+    public function push(DeviceCollection $devices, MessageInterface $message):void;
 
     public function getFeedback():array;
 }

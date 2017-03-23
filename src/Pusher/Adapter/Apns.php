@@ -19,6 +19,7 @@ class Apns implements AdapterInterface
 
     const PUSH_DEV = 'ssl://gateway.sandbox.push.apple.com:2195';
     const PUSH_PROD = 'ssl://gateway.push.apple.com:2195';
+    
     const FEEDBACK_DEV = 'ssl://feedback.sandbox.push.apple.com:2196';
     const FEEDBACK_PROD = 'ssl://feedback.push.apple.com:2196';
 
@@ -36,7 +37,7 @@ class Apns implements AdapterInterface
         $this->environment = $environment;
     }
 
-    public function push(DeviceCollection $devices, MessageInterface $message)
+    public function push(DeviceCollection $devices, MessageInterface $message):void
     {
         $gateway = $this->environment == AdapterInterface::ENVIRONMENT_PRODUCTION ? self::PUSH_PROD : self::PUSH_DEV;
         $payload = json_encode([

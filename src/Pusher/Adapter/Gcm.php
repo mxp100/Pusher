@@ -2,8 +2,8 @@
 /**
  * Created by PhpStorm.
  * User: yuriy
- * Date: 3/17/17
- * Time: 1:55 PM
+ * Date: 3/23/17
+ * Time: 2:21 PM
  */
 
 namespace Pusher\Adapter;
@@ -13,10 +13,9 @@ use Pusher\Collection\DeviceCollection;
 use Pusher\Exception\AdapterException;
 use Pusher\Model\MessageInterface;
 
-class Fcm implements AdapterInterface
+class Gcm implements AdapterInterface
 {
-
-    const API_URL = 'https://fcm.googleapis.com/fcm/send';
+    const API_URL = 'https://gcm-http.googleapis.com/gcm/send';
 
     protected $serverKey;
     protected $environment;
