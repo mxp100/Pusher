@@ -4,7 +4,7 @@ Compatable: PHP 7+
 ### Composer
 `composer require mxp100/pusher`
 ## Examples
-Example for APNS:
+Example for FCM:
 ```php
 $serverKey = '[server key]';
 $deviceId = '[device token]';
@@ -17,7 +17,20 @@ $adapter = new Fcm($serverKey);
 $pusher = new Pusher([new Push($adapter, $devices, $message)]);
 $pusher->push();
 ```
-Example for FCM:
+Example for GCM:
+```php
+$serverKey = '[path to certification]';
+$deviceId = '[device token]';
+
+$devices = new DeviceCollection([new Device($deviceId)]);
+$message = new Message('This is a test message');
+
+$adapter = new Gcm($serverKey, AdapterInterface::ENVIRONMENT_DEVELOPMENT);
+
+$pusher = new Pusher([new Push($adapter, $devices, $message)]);
+$pusher->push();
+```
+Example for APNS:
 ```php
 $serverKey = '[path to certification]';
 $deviceId = '[device token]';
