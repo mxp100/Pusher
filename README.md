@@ -1,5 +1,9 @@
 # Pusher
 Compatable: PHP 7+
+## Installation
+### Composer
+`composer require mxp100/pusher`
+## Examples
 Example for APNS:
 ```php
 $serverKey = '[server key]';
