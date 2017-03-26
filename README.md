@@ -3,6 +3,9 @@ Compatable: PHP 7+
 ## Installation
 ### Composer
 `composer require mxp100/pusher`
+### APNS certicates generate
+Please see Wiki:
+https://github.com/mxp100/Pusher/wiki/Generating-the-Apple-Push-Notification-SSL-certificate-on-Mac
 ## Examples
 Example for FCM:
 ```php
