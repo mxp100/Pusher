@@ -22,12 +22,25 @@ class Fcm implements AdapterInterface
     protected $environment;
     protected $invalidTokens = [];
 
+    /**
+     * FCM adapter constructor.
+     *
+     * @param string $serverKey Server key
+     * @param int $environment Production/development environment
+     */
     public function __construct(string $serverKey, int $environment = AdapterInterface::ENVIRONMENT_DEVELOPMENT)
     {
         $this->serverKey = $serverKey;
         $this->environment = $environment;
     }
 
+    /**
+     * Push message to devices
+     *
+     * @param \Pusher\Collection\DeviceCollection $devices
+     * @param \Pusher\Model\MessageInterface $message
+     * @throws \Pusher\Exception\AdapterException
+     */
     public function push(DeviceCollection $devices, MessageInterface $message):void
     {
         $tokens = $devices->getTokens();

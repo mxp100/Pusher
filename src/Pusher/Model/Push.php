@@ -18,6 +18,13 @@ class Push
     private $message;
     private $devices;
 
+    /**
+     * Push constructor.
+     *
+     * @param \Pusher\Adapter\AdapterInterface $adapter APNS/GCM/FCM adapter
+     * @param \Pusher\Collection\DeviceCollection $devices Target devices
+     * @param \Pusher\Model\MessageInterface $message Message
+     */
     public function __construct(AdapterInterface $adapter, DeviceCollection $devices, MessageInterface $message)
     {
         $this->adapter = $adapter;

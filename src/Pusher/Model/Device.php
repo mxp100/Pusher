@@ -14,6 +14,12 @@ class Device implements DeviceInterface
     protected $token;
     protected $parameters;
 
+    /**
+     * Device constructor. Create target device
+     *
+     * @param string $token Device token
+     * @param array $parameters Additional parameters
+     */
     public function __construct(string $token, array $parameters = [])
     {
         $this->token = $token;

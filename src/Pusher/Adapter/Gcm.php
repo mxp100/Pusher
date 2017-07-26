@@ -21,13 +21,19 @@ class Gcm implements AdapterInterface
     protected $environment;
     protected $invalidTokens = [];
 
+    /**
+     * GCM adapter constructor.
+     *
+     * @param string $serverKey Path to SSL certificate
+     * @param int $environment  Production/development environment
+     */
     public function __construct(string $serverKey, int $environment = AdapterInterface::ENVIRONMENT_DEVELOPMENT)
     {
         $this->serverKey = $serverKey;
         $this->environment = $environment;
     }
 
-    public function push(DeviceCollection $devices, MessageInterface $message):void
+    public function push(DeviceCollection $devices, MessageInterface $message): void
     {
         $tokens = $devices->getTokens();
 
@@ -74,7 +80,7 @@ class Gcm implements AdapterInterface
         }
     }
 
-    public function getFeedback():array
+    public function getFeedback(): array
     {
         $result = $this->invalidTokens;
         $this->invalidTokens = [];

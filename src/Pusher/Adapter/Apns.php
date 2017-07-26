@@ -27,6 +27,13 @@ class Apns implements AdapterInterface
     protected $passPhrase;
     protected $environment;
 
+    /**
+     * APNS adapter constructor.
+     *
+     * @param string $serverKey Path to SSL certificate
+     * @param int $environment Production/development environment
+     * @param string $passPhrase Pass-phrase for SSL certificate
+     */
     public function __construct(
         string $serverKey,
         int $environment = AdapterInterface::ENVIRONMENT_PRODUCTION,

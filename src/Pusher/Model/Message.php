@@ -15,6 +15,13 @@ class Message implements MessageInterface
     protected $priority;
     protected $ttl;
 
+    /**
+     * Message constructor.
+     *
+     * @param string $text Message
+     * @param int $priority Message priority
+     * @param int $ttl Message TTL
+     */
     public function __construct(string $text, int $priority = MessageInterface::PRIORITY_HIGH, int $ttl = 3600)
     {
         $this->text = $text;

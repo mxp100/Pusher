@@ -14,6 +14,9 @@ use Pusher\Model\Push;
 
 class Pusher extends PushCollection
 {
+    /**
+     * Send messages to devices
+     */
     public function push()
     {
         foreach ($this as $push) {
