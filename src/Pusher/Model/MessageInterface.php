@@ -14,17 +14,21 @@ interface MessageInterface
     const PRIORITY_NORMAL = 0;
     const PRIORITY_HIGH = 1;
 
-    public function __construct(string $text, int $priority = self::PRIORITY_HIGH, int $ttl = 3600);
+    public function __construct(string $text, string $title, int $priority = self::PRIORITY_HIGH, int $ttl = 3600);
 
-    public function setText(string $text):void;
+    public function setTitle(string $title): void;
 
-    public function getText():string;
+    public function getTitle(): string;
 
-    public function setPriority(int $priority):void;
+    public function setText(string $text): void;
 
-    public function getPriority():int;
+    public function getText(): string;
 
-    public function setTTL(int $ttl):void;
+    public function setPriority(int $priority): void;
 
-    public function getTTL():int;
+    public function getPriority(): int;
+
+    public function setTTL(int $ttl): void;
+
+    public function getTTL(): int;
 }

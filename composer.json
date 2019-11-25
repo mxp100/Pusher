@@ -1,7 +1,7 @@
 {
   "name": "mxp100/pusher",
   "description": "PHP push notifications to APNS, FCM",
-  "version": "1.0",
+  "version": "2.0",
   "keywords": ["push","notifications","apns","fcm"],
   "type": "library",
   "license": "Apache-2.0",
@@ -11,8 +11,9 @@
     }
   ],
   "require": {
-    "php": "^7.0",
-    "ext-json": ">=1.3.7"
+    "php": "^7.1",
+    "ext-json": ">=1.3.7",
+    "ext-curl": "*"
   },
   "require-dev": {
   },

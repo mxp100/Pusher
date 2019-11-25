@@ -19,7 +19,7 @@ class Apns implements AdapterInterface
 
     const PUSH_DEV = 'ssl://gateway.sandbox.push.apple.com:2195';
     const PUSH_PROD = 'ssl://gateway.push.apple.com:2195';
-    
+
     const FEEDBACK_DEV = 'ssl://feedback.sandbox.push.apple.com:2196';
     const FEEDBACK_PROD = 'ssl://feedback.push.apple.com:2196';
 
@@ -30,9 +30,9 @@ class Apns implements AdapterInterface
     /**
      * APNS adapter constructor.
      *
-     * @param string $serverKey Path to SSL certificate
-     * @param int $environment Production/development environment
-     * @param string $passPhrase Pass-phrase for SSL certificate
+     * @param  string  $serverKey  Path to SSL certificate
+     * @param  int  $environment  Production/development environment
+     * @param  string  $passPhrase  Pass-phrase for SSL certificate
      */
     public function __construct(
         string $serverKey,
@@ -44,12 +44,18 @@ class Apns implements AdapterInterface
         $this->environment = $environment;
     }
 
-    public function push(DeviceCollection $devices, MessageInterface $message):void
+    /**
+     * @inheritDoc
+     */
+    public function push(DeviceCollection $devices, MessageInterface $message): void
     {
         $gateway = $this->environment == AdapterInterface::ENVIRONMENT_PRODUCTION ? self::PUSH_PROD : self::PUSH_DEV;
         $payload = json_encode([
             'aps' => [
-                'alert' => $message->getText(),
+                'alert' => [
+                    'title' => $message->getTitle(),
+                    'body'  => $message->getText(),
+                ]
             ],
         ]);
 
@@ -72,17 +78,17 @@ class Apns implements AdapterInterface
         foreach ($devices as $device) {
             /** @var Device $device */
 
-            $inner = chr(1) . pack('n', 32) . pack('H*', str_replace(' ', '', $device->getToken()))
+            $inner = chr(1).pack('n', 32).pack('H*', str_replace(' ', '', $device->getToken()))
 
-                . chr(2) . pack('n', strlen($payload)) . $payload
+                .chr(2).pack('n', strlen($payload)).$payload
 
-                . chr(3) . pack('n', 4) . pack('N', $idx)
+                .chr(3).pack('n', 4).pack('N', $idx)
 
-                . chr(4) . pack('n', 4) . pack('N', time() + $message->getTTL())
+                .chr(4).pack('n', 4).pack('N', time() + $message->getTTL())
 
-                . chr(5) . pack('n', 1) . chr($message->getPriority());
+                .chr(5).pack('n', 1).chr($message->getPriority());
 
-            $notification = chr(2) . pack('N', strlen($inner)) . $inner;
+            $notification = chr(2).pack('N', strlen($inner)).$inner;
 
             fwrite($fp, $notification, strlen($notification));
             $idx++;
@@ -91,7 +97,7 @@ class Apns implements AdapterInterface
         fclose($fp);
     }
 
-    public function getFeedback():array
+    public function getFeedback(): array
     {
         $gateway = $this->environment == AdapterInterface::ENVIRONMENT_PRODUCTION ? self::FEEDBACK_PROD : self::FEEDBACK_DEV;
 
