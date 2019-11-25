@@ -47,7 +47,10 @@ class Push
         return $this->message;
     }
     
-    public function push(){
+    public function push():array
+    {
         $this->adapter->push($this->devices, $this->message);
+
+        return $this->adapter->getFeedback();
     }
 }

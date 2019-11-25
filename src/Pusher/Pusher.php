@@ -19,10 +19,14 @@ class Pusher extends PushCollection
      */
     public function push()
     {
+        $result = [];
+
         foreach ($this as $push) {
             /** @var Push $push */
 
-            $push->push();
+            array_push($result, ...$push->push());
         }
+
+        return $result;
     }
 }
