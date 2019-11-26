@@ -24,7 +24,9 @@ class Pusher extends PushCollection
         foreach ($this as $push) {
             /** @var Push $push */
 
-            array_push($result, ...$push->push());
+            if($results = $push->push()) {
+                array_push($result, ...$results);
+            }
         }
 
         return $result;
