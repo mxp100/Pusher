@@ -50,14 +50,19 @@ class Apns implements AdapterInterface
     public function push(DeviceCollection $devices, MessageInterface $message): void
     {
         $gateway = $this->environment == AdapterInterface::ENVIRONMENT_PRODUCTION ? self::PUSH_PROD : self::PUSH_DEV;
-        $payload = json_encode([
-            'aps' => [
-                'alert' => [
-                    'title' => $message->getTitle(),
-                    'body'  => $message->getText(),
-                ]
-            ],
-        ]);
+
+        $payload = $message->getPayload();
+
+        $payload['aps'] = [];
+
+        if (! empty($message->getTitle())) {
+            $payload['aps']['alert']['title'] = $message->getTitle();
+            $payload['aps']['alert']['body'] = $message->getText();
+        } else {
+            $payload['aps']['alert'] = $message->getText();
+        }
+
+        $payload = json_encode($payload);
 
         $ctx = stream_context_create();
 

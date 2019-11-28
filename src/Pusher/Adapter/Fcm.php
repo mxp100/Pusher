@@ -42,13 +42,18 @@ class Fcm implements AdapterInterface
         $tokens = $devices->getTokens();
 
         $data = [
-            'notification'     => [
-                'title' => $message->getTitle(),
-                'body'  => $message->getText(),
-            ],
-            'registration_ids' => $tokens,
-            'time_to_live'     => $message->getTTL(),
+            'data' => $message->getPayload()
         ];
+
+        if (! empty($message->getTitle())) {
+            $data['data']['title'] = $message->getTitle();
+            $data['data']['body'] = $message->getText();
+        } else {
+            $data['data']['body'] = $message->getText();
+        }
+
+        $data['registration_ids'] = $tokens;
+        $data['time_to_live'] = $message->getTTL();
 
         switch ($message->getPriority()) {
             case MessageInterface::PRIORITY_HIGH:
