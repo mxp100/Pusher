@@ -10,10 +10,13 @@ namespace Pusher;
 
 
 use Pusher\Collection\PushCollection;
+use Pusher\Exception\AdapterException;
 use Pusher\Model\Push;
 
 class Pusher extends PushCollection
 {
+    protected $skipError = false;
+
     /**
      * Send messages to devices
      */
@@ -24,11 +27,22 @@ class Pusher extends PushCollection
         foreach ($this as $push) {
             /** @var Push $push */
 
-            if($results = $push->push()) {
-                array_push($result, ...$results);
+            try {
+                $results = $push->push();
+                if ($results) {
+                    array_push($result, ...$results);
+                }
+            } catch (AdapterException $e){
+                if (!$this->skipError)
+                    throw $e;
             }
         }
 
         return $result;
+    }
+
+    public function skipError($state)
+    {
+        $this->skipError = $state;
     }
 }
