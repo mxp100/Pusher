@@ -69,9 +69,9 @@ class Apns implements AdapterInterface
         stream_context_set_option($ctx, 'ssl', 'local_cert', $this->serverKey);
         stream_context_set_option($ctx, 'ssl', 'passphrase', $this->passPhrase);
 
-        $fp = stream_socket_client($gateway, $err, $errstr, 60, STREAM_CLIENT_CONNECT | STREAM_CLIENT_PERSISTENT, $ctx);
+        $fp = @stream_socket_client($gateway, $err, $errstr, 60, STREAM_CLIENT_CONNECT | STREAM_CLIENT_PERSISTENT, $ctx);
 
-        if (!empty($errstr)) {
+        if ($errstr || $err) {
             throw new AdapterException($errstr, AdapterException::CAN_NOT_CONNECT);
         }
 
