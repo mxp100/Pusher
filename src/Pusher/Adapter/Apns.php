@@ -104,10 +104,10 @@ class Apns implements AdapterInterface
 
             fwrite($fp, $notification, strlen($notification));
 
-            $errorResponse = @fread($fp, 6);
-            if (!empty($errorResponse)) {
-                throw new AdapterException('error response:'.json_encode($errorResponse));
-            }
+//            $errorResponse = @fread($fp, 6);
+//            if (!empty($errorResponse)) {
+//                throw new AdapterException('error response:'.json_encode($errorResponse));
+//            }
 
             $idx++;
         }
