@@ -71,8 +71,6 @@ class Apns implements AdapterInterface
 
         $fp = @stream_socket_client($gateway, $err, $errstr, 60, STREAM_CLIENT_CONNECT | STREAM_CLIENT_PERSISTENT,  $ctx);
 
-        stream_set_timeout($fp, 2);
-
         if ($errstr || $err) {
             throw new AdapterException($errstr, AdapterException::CAN_NOT_CONNECT);
         }
@@ -80,6 +78,8 @@ class Apns implements AdapterInterface
         if (!$fp) {
             throw new AdapterException('can not connect', AdapterException::CAN_NOT_CONNECT);
         }
+
+        stream_set_timeout($fp, 2);
 
         switch ($message->getPriority()) {
             case MessageInterface::PRIORITY_NORMAL:
