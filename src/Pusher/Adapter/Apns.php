@@ -55,7 +55,7 @@ class Apns implements AdapterInterface
 
         $payload['aps'] = [];
 
-        if (! empty($message->getTitle())) {
+        if (!empty($message->getTitle())) {
             $payload['aps']['alert']['title'] = $message->getTitle();
             $payload['aps']['alert']['body'] = $message->getText();
         } else {
@@ -69,7 +69,8 @@ class Apns implements AdapterInterface
         stream_context_set_option($ctx, 'ssl', 'local_cert', $this->serverKey);
         stream_context_set_option($ctx, 'ssl', 'passphrase', $this->passPhrase);
 
-        $fp = @stream_socket_client($gateway, $err, $errstr, 60, STREAM_CLIENT_CONNECT | STREAM_CLIENT_PERSISTENT, $ctx);
+        $fp = @stream_socket_client($gateway, $err, $errstr, 60, STREAM_CLIENT_CONNECT | STREAM_CLIENT_PERSISTENT,
+            $ctx);
 
         if ($errstr || $err) {
             throw new AdapterException($errstr, AdapterException::CAN_NOT_CONNECT);
@@ -79,23 +80,34 @@ class Apns implements AdapterInterface
             throw new AdapterException('can not connect', AdapterException::CAN_NOT_CONNECT);
         }
 
+        switch ($message->getPriority()) {
+            case MessageInterface::PRIORITY_NORMAL:
+                $priority = 5;
+                break;
+            case MessageInterface::PRIORITY_HIGH:
+            default:
+                $priority = 10;
+        }
+
         $idx = 1;
         foreach ($devices as $device) {
             /** @var Device $device */
 
             $inner = chr(1).pack('n', 32).pack('H*', str_replace(' ', '', $device->getToken()))
-
                 .chr(2).pack('n', strlen($payload)).$payload
-
                 .chr(3).pack('n', 4).pack('N', $idx)
-
                 .chr(4).pack('n', 4).pack('N', time() + $message->getTTL())
-
-                .chr(5).pack('n', 1).chr($message->getPriority());
+                .chr(5).pack('n', 1).chr($priority);
 
             $notification = chr(2).pack('N', strlen($inner)).$inner;
 
             fwrite($fp, $notification, strlen($notification));
+
+            $errorResponse = @fread($fp, 6);
+            if (!empty($errorResponse)) {
+                throw new AdapterException('error response:'.json_encode($errorResponse));
+            }
+
             $idx++;
         }
 
