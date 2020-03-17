@@ -27,6 +27,8 @@ class Apns implements AdapterInterface
     protected $passPhrase;
     protected $environment;
 
+    protected $socket;
+
     /**
      * APNS adapter constructor.
      *
@@ -49,7 +51,7 @@ class Apns implements AdapterInterface
      */
     public function push(DeviceCollection $devices, MessageInterface $message): void
     {
-        $gateway = $this->environment == AdapterInterface::ENVIRONMENT_PRODUCTION ? self::PUSH_PROD : self::PUSH_DEV;
+
 
         $payload = $message->getPayload();
 
@@ -64,22 +66,7 @@ class Apns implements AdapterInterface
 
         $payload = json_encode($payload);
 
-        $ctx = stream_context_create();
 
-        stream_context_set_option($ctx, 'ssl', 'local_cert', $this->serverKey);
-        stream_context_set_option($ctx, 'ssl', 'passphrase', $this->passPhrase);
-
-        $fp = @stream_socket_client($gateway, $err, $errstr, 60, STREAM_CLIENT_CONNECT | STREAM_CLIENT_PERSISTENT,  $ctx);
-
-        if ($errstr || $err) {
-            throw new AdapterException($errstr, AdapterException::CAN_NOT_CONNECT);
-        }
-
-        if (!$fp) {
-            throw new AdapterException('can not connect', AdapterException::CAN_NOT_CONNECT);
-        }
-
-        stream_set_timeout($fp, 2);
 
         switch ($message->getPriority()) {
             case MessageInterface::PRIORITY_NORMAL:
@@ -90,11 +77,16 @@ class Apns implements AdapterInterface
                 $priority = 10;
         }
 
-        $idx = 1;
+        $idx = 0;
+
         foreach ($devices as $device) {
             /** @var Device $device */
 
-            $inner = chr(1).pack('n', 32).pack('H*', str_replace(' ', '', $device->getToken()))
+            $this->connect();
+
+            $token = pack('H*', str_replace(' ', '', $device->getToken()));
+
+            $inner = chr(1).pack('n', strlen($token)).$token
                 .chr(2).pack('n', strlen($payload)).$payload
                 .chr(3).pack('n', 4).pack('N', $idx)
                 .chr(4).pack('n', 4).pack('N', time() + $message->getTTL())
@@ -102,17 +94,19 @@ class Apns implements AdapterInterface
 
             $notification = chr(2).pack('N', strlen($inner)).$inner;
 
-            fwrite($fp, $notification, strlen($notification));
+            fwrite($this->socket, $notification, strlen($notification));
 
-//            $errorResponse = @fread($fp, 6);
-//            if (!empty($errorResponse)) {
-//                throw new AdapterException('error response:'.json_encode($errorResponse));
-//            }
+            $errorResponse = @fread($this->socket, 6);
+            if (!empty($errorResponse)) {
+                throw new AdapterException('error response:'.json_encode($errorResponse));
+            }
 
             $idx++;
+
+            fclose($this->socket);
         }
 
-        fclose($fp);
+
     }
 
     public function getFeedback(): array
@@ -145,5 +139,30 @@ class Apns implements AdapterInterface
         fclose($fp);
 
         return $tokens;
+    }
+
+    protected function connect()
+    {
+        $gateway = $this->environment == AdapterInterface::ENVIRONMENT_PRODUCTION ? self::PUSH_PROD : self::PUSH_DEV;
+
+        $ctx = stream_context_create();
+
+        stream_context_set_option($ctx, 'ssl', 'local_cert', $this->serverKey);
+        stream_context_set_option($ctx, 'ssl', 'passphrase', $this->passPhrase);
+
+        $this->socket = @stream_socket_client($gateway, $err, $errstr, 60, STREAM_CLIENT_CONNECT | STREAM_CLIENT_PERSISTENT,
+            $ctx);
+
+        stream_set_timeout($this->socket, 2);
+        stream_set_write_buffer($this->socket, 0);
+        stream_set_blocking($this->socket, 0);
+
+        if ($errstr || $err) {
+            throw new AdapterException($errstr, AdapterException::CAN_NOT_CONNECT);
+        }
+
+        if (!$this->socket) {
+            throw new AdapterException('can not connect', AdapterException::CAN_NOT_CONNECT);
+        }
     }
 }
