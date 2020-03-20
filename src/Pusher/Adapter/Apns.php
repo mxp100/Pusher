@@ -153,10 +153,6 @@ class Apns implements AdapterInterface
         $this->socket = @stream_socket_client($gateway, $err, $errstr, 60, STREAM_CLIENT_CONNECT | STREAM_CLIENT_PERSISTENT,
             $ctx);
 
-        stream_set_timeout($this->socket, 2);
-        stream_set_write_buffer($this->socket, 0);
-        stream_set_blocking($this->socket, 0);
-
         if ($errstr || $err) {
             throw new AdapterException($errstr, AdapterException::CAN_NOT_CONNECT);
         }
@@ -164,5 +160,9 @@ class Apns implements AdapterInterface
         if (!$this->socket) {
             throw new AdapterException('can not connect', AdapterException::CAN_NOT_CONNECT);
         }
+
+        stream_set_timeout($this->socket, 2);
+        stream_set_write_buffer($this->socket, 0);
+        stream_set_blocking($this->socket, 0);
     }
 }
