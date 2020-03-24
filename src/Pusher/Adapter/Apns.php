@@ -96,10 +96,10 @@ class Apns implements AdapterInterface
 
             fwrite($this->socket, $notification, strlen($notification));
 
-            $errorResponse = @fread($this->socket, 6);
-            if (!empty($errorResponse)) {
-                throw new AdapterException('error response:'.json_encode($errorResponse));
-            }
+//            $errorResponse = @fread($this->socket, 6);
+//            if (!empty($errorResponse)) {
+//                throw new AdapterException('error response:'.json_encode($errorResponse));
+//            }
 
             $idx++;
 
@@ -161,8 +161,8 @@ class Apns implements AdapterInterface
             throw new AdapterException('can not connect', AdapterException::CAN_NOT_CONNECT);
         }
 
-        stream_set_timeout($this->socket, 2);
-        stream_set_write_buffer($this->socket, 0);
-        stream_set_blocking($this->socket, 0);
+//        stream_set_timeout($this->socket, 2);
+//        stream_set_write_buffer($this->socket, 0);
+//        stream_set_blocking($this->socket, 0);
     }
 }
